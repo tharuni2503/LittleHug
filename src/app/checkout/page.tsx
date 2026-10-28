@@ -164,6 +164,7 @@ function CheckoutContent() {
       }
 
       const orderId: string = orderResult.order.id;
+      const accessToken: string = orderResult.accessToken;
 
       // 3. Create the Razorpay order on the server.
       const paymentOrderResponse = await fetch(
@@ -228,12 +229,10 @@ function CheckoutContent() {
                   },
                   body: JSON.stringify({
                     orderId,
-                    razorpay_order_id:
-                      payment.razorpay_order_id,
-                    razorpay_payment_id:
-                      payment.razorpay_payment_id,
-                    razorpay_signature:
-                      payment.razorpay_signature,
+                    accessToken,
+                    razorpay_order_id: payment.razorpay_order_id,
+                    razorpay_payment_id: payment.razorpay_payment_id,
+                    razorpay_signature: payment.razorpay_signature,
                   }),
                 }
               );
@@ -251,7 +250,7 @@ function CheckoutContent() {
               }
 
              window.location.href =
-  `/order-success?orderId=${encodeURIComponent(orderId)}`;
+  `/order-success?orderId=${encodeURIComponent(orderId)}&accessToken=${encodeURIComponent(accessToken)}`;
 finish();
             } catch (err) {
               finish(

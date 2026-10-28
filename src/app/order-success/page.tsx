@@ -13,6 +13,7 @@ type OrderStatus = {
 function OrderSuccessContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
+  const accessToken = searchParams.get("accessToken");
 
   const [order, setOrder] = useState<OrderStatus | null>(null);
   const [loading, setLoading] = useState(true);
@@ -29,10 +30,16 @@ function OrderSuccessContent() {
       }
 
       try {
-        const response = await fetch(
-          `/api/order-status?orderId=${encodeURIComponent(orderId)}`,
-          { cache: "no-store" }
-        );
+        if (!accessToken) {
+  setError("Order access token is missing. Please use your original confirmation link.");
+  setLoading(false);
+  return;
+}
+
+const response = await fetch(
+  `/api/order-status?orderId=${encodeURIComponent(orderId)}&accessToken=${encodeURIComponent(accessToken)}`,
+  { cache: "no-store" }
+);
         const result = await response.json();
 
         if (!response.ok) {
